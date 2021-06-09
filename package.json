@@ -6,6 +6,9 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "ag-grid-community": "^25.3.0",
+    "ag-grid-enterprise": "^25.3.0",
+    "ag-grid-react": "^25.3.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0"
   },
