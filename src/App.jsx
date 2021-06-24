@@ -6,7 +6,7 @@ import { TestForm } from "./FormControl";
 import { InputField } from "./FormControl";
 import { GanntChart } from "./GanntChart";
 import "bootstrap/dist/css/bootstrap.css";
-import * as yup from 'yup'
+import * as yup from "yup";
 
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
@@ -83,16 +83,20 @@ const columnDefs = [
 ];
 
 const FormInput = (params) => {
-  console.log({params})
-  if(params?.data?.formMode) {
-    console.log('parms.control', params?.context?.control)
-    return <form> <InputField className='inputField' name={params.colDef.headerName.toLowerCase()} control={params.context?.control} /></form> 
-    
-
-
+  if (params?.data?.formMode) {
+    console.log("parms.control", params?.context?.control);
+    return (
+      <form>
+        <InputField
+          className="inputField"
+          name={params.colDef.headerName.toLowerCase()}
+          control={params.context?.control}
+        />
+      </form>
+    );
   }
-return params.value
-}
+  return params.value;
+};
 
 const columnDefs2 = [
   {
@@ -105,19 +109,19 @@ const columnDefs2 = [
     headerName: "Make",
     rowGroup: true,
     hide: false,
-    valueGetter: ({ data }) => data?.make || '', 
-    cellRenderer: 'formInputRenderer'
+    valueGetter: ({ data }) => data?.make || "",
+    cellRenderer: "formInputRenderer",
   },
   {
     headerName: "Model",
     hide: false,
-    valueGetter: ({ data }) => data?.model || '',
-    cellRenderer: 'formInputRenderer'
+    valueGetter: ({ data }) => data?.model || "",
+    cellRenderer: "formInputRenderer",
   },
   {
     headerName: "Price",
     valueGetter: ({ data }) => data?.price || "",
-    cellRenderer: 'formInputRenderer'
+    cellRenderer: "formInputRenderer",
   },
 ];
 const rowData1 = [
@@ -147,65 +151,77 @@ const getContextMenuItems = (params) => {
   return [
     {
       // custom item
-      name: 'Add Activity',
+      name: "Add Activity",
       action: () => {
-        window.alert('Add activity')
-        console.log({params})
-       const clickedRowIndex =  params.node.rowIndex
-        const rowData = []
-      params.api.forEachNode(node => rowData.push(node.data))
-        params.api.applyTransaction({add: [{formMode: true, filePath: ["car", '']}]})
-      }
+        const rowData = [];
+        params.api.forEachNode((node) => rowData.push(node.data));
+        params.api.applyTransaction({
+          add: [{ formMode: true, filePath: ["car", ""] }],
+        });
+      },
     },
     {
       // custom item
-      name: 'Always Disabled',
+      name: "Always Disabled",
       disabled: true,
       tooltip:
-        'Very long tooltip, did I mention that I am very long, well I am! Long!  Very Long!',
-    }
-  ]}
+        "Very long tooltip, did I mention that I am very long, well I am! Long!  Very Long!",
+    },
+  ];
+};
 
 const App = () => {
-  const [gridApi, setGridApi] = useState(null)
-  const {control, handleSubmit, reset} = useForm({
-    mode: 'onChange',
+  const [gridApi, setGridApi] = useState(null);
+  const { control, handleSubmit, reset } = useForm({
+    mode: "onChange",
     defaultValues: {
-      make: '', model: '', price: ''
+      make: "",
+      model: "",
+      price: "",
     },
-    resolver: yupResolver(yup.object().shape({
-      make: yup.string().required(),
-      model: yup.string().required(),
-      price: yup.number().required()
-    }))
-  })
+    resolver: yupResolver(
+      yup.object().shape({
+        make: yup.string().required(),
+        model: yup.string().required(),
+        price: yup.number().required(),
+      })
+    ),
+  });
 
-  const onGridReady = (params) => setGridApi(params.api)
+  const onGridReady = (params) => setGridApi(params.api);
 
   const onSubmit = (values, e) => {
     // Run query
-    console.log('Form Submitted: ', values)
+    console.log("Form Submitted: ", values);
     // Remove row and set new row data
-    const newRow = {...values, type: 'car', filePath: ['car', values.make], id: 23423}
-    const rowData = []
+    const newRow = {
+      ...values,
+      type: "car",
+      filePath: ["car", values.make],
+      id: 23423,
+    };
+    const rowData = [];
     gridApi.forEachNode((node) => {
-      console.log('dis data', node.data)
-      if(node?.data && !node?.data?.formMode){
-        rowData.push(node.data)
+      if (node?.data && !node?.data?.formMode) {
+        rowData.push(node.data);
       }
-    })
-    rowData.push(newRow)
-    reset()
-    gridApi.setRowData(rowData)
-  }
+    });
+    rowData.push(newRow);
+    reset();
+    gridApi.setRowData(rowData);
+  };
 
-  document.addEventListener('click', (e) => {
-    Array.from(document.getElementsByClassName('inputField')).forEach(item => {
-      if(!item.contains(e.target)){
-        handleSubmit(onSubmit)().then(() => console.log('success')).catch(err => console.log('err', err))
+  document.addEventListener("click", (e) => {
+    Array.from(document.getElementsByClassName("inputField")).forEach(
+      (item) => {
+        if (!item.contains(e.target)) {
+          handleSubmit(onSubmit)()
+            .then(() => console.log("success"))
+            .catch((err) => console.log("err", err));
+        }
       }
-    })
-  })
+    );
+  });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -215,7 +231,7 @@ const App = () => {
           columnDefs={columnDefs2}
           frameworkComponents={{
             fullWidthRenderer: fullWidth,
-            formInputRenderer: FormInput
+            formInputRenderer: FormInput,
           }}
           defaultColDef={{
             flex: 1,
@@ -228,7 +244,7 @@ const App = () => {
           getDataPath={(data) => data.filePath}
           fullWidthCellRenderer={"fullWidthRenderer"}
           groupDefaultExpanded={-1}
-          context={{control}}
+          context={{ control }}
           isFullWidthCell={({ data }) => data?.fullWidth}
           getRowNodeId={() => Math.random()}
           allowContextMenuWithControlKey={true}
